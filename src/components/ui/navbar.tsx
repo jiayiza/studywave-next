@@ -13,12 +13,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSession } from "next-auth/react";
+import { signOut } from "@/auth/helpers";
 
-const isAuthenticated =true;   
-const user = { avatar: "", name: "jj", email: "a" };
-const logout = () => {};
+// import { User as UserType } from "@/auth";
 
-export default function Navbar() {
+export function Navbar() {
+  const { data: session } = useSession();
+  const isAuthenticated = !!session;
+  const user = session?.user;
+
   const location = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
@@ -102,16 +106,16 @@ export default function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-10 w-10 rounded-full p-0">
                   <Avatar>
-                    <AvatarImage src={user?.avatar} alt={user?.name} />
+                    <AvatarImage src={user?.avatar} alt={user.username} />
                     <AvatarFallback>
-                      {getInitials(user?.name || "")}
+                      {getInitials(user?.username || "")}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <div className="px-4 py-2 text-sm">
-                  <p className="font-medium">{user?.name}</p>
+                  <p className="font-medium">{user?.username}</p>
                   <p className="text-muted-foreground text-xs">{user?.email}</p>
                 </div>
                 <DropdownMenuSeparator />
@@ -121,7 +125,7 @@ export default function Navbar() {
                     Dashboard
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem onClick={logout}>
+                <DropdownMenuItem onClick={signOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
                 </DropdownMenuItem>
