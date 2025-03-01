@@ -1,6 +1,25 @@
-import { useState, useEffect } from "react";
+"use client";
 
-export function Navbar() {
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { BookOpen, Video, Grid, User, LogOut } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+const isAuthenticated =true;   
+const user = { avatar: "", name: "jj", email: "a" };
+const logout = () => {};
+
+export default function Navbar() {
+  const location = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -16,7 +35,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => location === path;
 
   const navItems = [
     { path: "/", label: "Home", icon: BookOpen },
@@ -37,18 +56,18 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 px-6 transition-all duration-300 ${
-        scrolled ? "py-3 glass-panel border-b" : "py-5 bg-transparent"
+      className={`fixed top-0 right-0 left-0 z-50 px-6 transition-all duration-300 ${
+        scrolled ? "glass-panel border-b py-3" : "bg-transparent py-5"
       }`}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="text-xl font-display font-semibold tracking-tight">
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="font-display text-xl font-semibold tracking-tight">
             StudyWave
           </span>
         </Link>
 
-        <nav className="hidden md:flex space-x-1">
+        <nav className="hidden space-x-1 md:flex">
           {navItems.map((item) => {
             const Icon = item.icon;
             // Skip dashboard link if not authenticated
@@ -60,16 +79,16 @@ export function Navbar() {
               return null;
             }
             return (
-              <Link key={item.path} to={item.path}>
+              <Link className="" key={item.path} href={item.path}>
                 <Button
                   variant={isActive(item.path) ? "secondary" : "ghost"}
-                  className={`px-4 py-2 rounded-full transition-all ${
+                  className={`rounded-full px-4 py-2 transition-all ${
                     isActive(item.path)
                       ? "bg-secondary"
                       : "hover:bg-secondary/50"
                   }`}
                 >
-                  <Icon className="w-4 h-4 mr-2" />
+                  <Icon className="mr-2 h-4 w-4" />
                   {item.label}
                 </Button>
               </Link>
@@ -81,7 +100,7 @@ export function Navbar() {
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="rounded-full w-10 h-10 p-0">
+                <Button variant="ghost" className="h-10 w-10 rounded-full p-0">
                   <Avatar>
                     <AvatarImage src={user?.avatar} alt={user?.name} />
                     <AvatarFallback>
@@ -93,34 +112,34 @@ export function Navbar() {
               <DropdownMenuContent align="end">
                 <div className="px-4 py-2 text-sm">
                   <p className="font-medium">{user?.name}</p>
-                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  <p className="text-muted-foreground text-xs">{user?.email}</p>
                 </div>
                 <DropdownMenuSeparator />
-                <Link to="/dashboard">
+                <Link className="cursor-pointer" href="/dashboard">
                   <DropdownMenuItem>
-                    <User className="w-4 h-4 mr-2" />
+                    <User className="mr-2 h-4 w-4" />
                     Dashboard
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem onClick={logout}>
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="mr-2 h-4 w-4" />
                   Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
-              <Link to="/login">
+              <Link className="cursor-pointer" href="/login">
                 <Button variant="ghost">Sign in</Button>
               </Link>
-              <Link to="/signup">
+              <Link className="cursor-pointer" href="/signup">
                 <Button>Sign up</Button>
               </Link>
             </>
           )}
-          <Link to="/upload">
+          <Link className="cursor-pointer" href="/upload">
             <Button className="rounded-full">
-              <Video className="w-4 h-4 mr-2" />
+              <Video className="mr-2 h-4 w-4" />
               Upload
             </Button>
           </Link>
