@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { BookOpen, Video, Grid, User, LogOut } from "lucide-react";
+import { BookOpen, Grid, User, LogOut, UploadCloud } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,9 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
-import { signOut } from "@/auth/helpers";
-
-// import { User as UserType } from "@/auth";
+import { signOut } from "next-auth/react";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -43,7 +41,7 @@ export function Navbar() {
 
   const navItems = [
     { path: "/", label: "Home", icon: BookOpen },
-    { path: "/upload", label: "Upload", icon: Video },
+    { path: "/upload", label: "Upload", icon: UploadCloud },
     { path: "/mindmap", label: "Mind Maps", icon: Grid },
     { path: "/dashboard", label: "Dashboard", icon: User },
   ];
@@ -106,16 +104,16 @@ export function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-10 w-10 rounded-full p-0">
                   <Avatar>
-                    <AvatarImage src={user?.avatar} alt={user.username} />
+                    <AvatarImage src={user?.image} alt={user?.name} />
                     <AvatarFallback>
-                      {getInitials(user?.username || "")}
+                      {getInitials(user?.name || "")}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <div className="px-4 py-2 text-sm">
-                  <p className="font-medium">{user?.username}</p>
+                  <p className="font-medium">{user?.name}</p>
                   <p className="text-muted-foreground text-xs">{user?.email}</p>
                 </div>
                 <DropdownMenuSeparator />
@@ -125,7 +123,7 @@ export function Navbar() {
                     Dashboard
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem onClick={signOut}>
+                <DropdownMenuItem onClick={() => signOut()}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
                 </DropdownMenuItem>
@@ -134,19 +132,13 @@ export function Navbar() {
           ) : (
             <>
               <Link className="cursor-pointer" href="/login">
-                <Button variant="ghost">Sign in</Button>
+                <Button variant="ghost">Log in</Button>
               </Link>
-              <Link className="cursor-pointer" href="/signup">
+              <Link className="cursor-pointer" href="/sign-up">
                 <Button>Sign up</Button>
               </Link>
             </>
           )}
-          <Link className="cursor-pointer" href="/upload">
-            <Button className="rounded-full">
-              <Video className="mr-2 h-4 w-4" />
-              Upload
-            </Button>
-          </Link>
         </div>
       </div>
     </header>

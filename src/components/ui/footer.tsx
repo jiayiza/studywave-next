@@ -119,7 +119,7 @@ export function Footer() {
               </svg>
             </Link>
             <Link
-              href="#"
+              href="https://github.com/jiayiza/studywave-next.git"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <span className="sr-only">GitHub</span>

@@ -1,16 +1,8 @@
-import NextAuth from "next-auth";
+import NextAuth, { type DefaultSession } from "next-auth";
 import Google from "next-auth/providers/google";
-// import Credentials from "next-auth/providers/credentials";
+import Credentials from "next-auth/providers/credentials";
 
 // export const BASE_PATH = "/api/auth";
-
-// export interface User {
-//   id?: string;
-//   username?: string;
-//   password?: string;
-//   avatar?: string;
-//   email?: string;
-// }
 
 // const users = [
 //   {
@@ -51,10 +43,48 @@ import Google from "next-auth/providers/google";
 //   secret: process.env.NEXTAUTH_SECRET,
 // };
 
+declare module "next-auth" {
+  /**
+   * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
+   */
+  interface Session {
+    user: {
+      /** The user's postal address. */
+      name?: string;
+      email?: string;
+      password?: string;
+      image?: string;
+      /**
+       * By default, TypeScript merges new interface properties and overwrites existing ones.
+       * In this case, the default session user properties will be overwritten,
+       * with the new ones defined above. To keep the default session user properties,
+       * you need to add them back into the newly declared interface.
+       */
+    } & DefaultSession["user"];
+  }
+}
+
 const USERS = [
   { name: "Jiayi Zhan", email: "jiayizhan2005@gmail.com", password: "pwd" },
 ];
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [Google],
+  providers: [
+    Google,
+    Credentials({
+      credentials: { email: {}, password: {} },
+      authorize: async (credentials) => {
+        const user = USERS.find(
+          (user) =>
+            user.email === credentials.email &&
+            user.password === credentials.password,
+        );
+
+        return user ? { email: user.email, name: user.name } : null;
+      },
+    }),
+  ],
+  pages: {
+    signIn: "/login",
+  },
 });
